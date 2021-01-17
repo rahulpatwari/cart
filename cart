@@ -1,0 +1,45 @@
+<?php
+   session_start();
+   include('data-autho.php');
+   if (isset($_POST['add'])) {
+       $id=htmlspecialchars($_POST['pid']);
+       $query="SELECT * from product where id ='".$id."'";
+       $res=mysqli_query($con,$query);
+       while ($row = mysqli_fetch_array($res)) {
+       	if ($row['quantity'] != $_SESSION['product_' . $id]) {
+       		$_SESSION['product_' .$id]+=1;
+       		header("Location:checkout.php");
+       	}
+       	else{
+       		$_SESSION['mes']="We only " .$row['quantity']." ".$row['name']." available";
+       		header("Location:checkout.php");
+       	}
+       }
+   }
+
+   if (isset($_GET['remove'])) {
+       
+      $_SESSION['product_' .$_GET['remove']]--;
+      if ($_SESSION['product_' .$_GET['remove']] <1) {
+         unset($_SESSION['item_quantity']);
+         unset($_SESSION['item_total']);
+
+       header("Location:checkout.php");
+
+       }
+       else{
+       	header("Location:checkout.php");
+       }
+   	
+   }
+
+   if (isset($_GET['delete'])) {
+       
+      $_SESSION['product_' .$_GET['delete']]=0;
+      unset($_SESSION['item_quantity']);
+         unset($_SESSION['item_total']);
+
+       	header("Location:checkout.php");
+       
+   }
+?>
